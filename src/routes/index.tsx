@@ -461,7 +461,7 @@ function Dashboard() {
         </section>
 
         {/* Remediation */}
-        <section className="mt-16 grid gap-5 lg:grid-cols-3">
+        <section id="remediation" className="mt-16 grid gap-5 lg:grid-cols-3">
           {remediations.map((r, i) => (
             <motion.article
               key={r.number}
