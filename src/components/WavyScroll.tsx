@@ -29,7 +29,7 @@ export function WavyScroll({ dream = false }: Props) {
   const shipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
     const ctx = gsap.context(() => {
       const path = pathRef.current;
       const shadow = shadowRef.current;
