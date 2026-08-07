@@ -505,6 +505,7 @@ function Dashboard() {
           </p>
         </footer>
       </main>
+      <VoltCompanion />
     </div>
   );
 }
