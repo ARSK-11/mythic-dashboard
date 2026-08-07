@@ -158,12 +158,11 @@ export function WavyScroll({ dream = false }: Props) {
                 x={s.x}
                 y={s.y - 22}
                 textAnchor="middle"
-                className="font-mono-brut"
+                className="font-mono-brut uppercase"
                 fill="var(--ink)"
                 fontSize="13"
                 fontWeight="700"
                 letterSpacing="0.05em"
-                textTransform="uppercase"
               >
                 {s.label}
               </text>
