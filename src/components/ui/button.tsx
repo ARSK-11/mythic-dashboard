@@ -37,9 +37,13 @@ const buttonVariants = cva(
         brut: "min-h-[52px] px-5 text-base",
         brutPill: "px-3.5 py-2.5 text-[0.82rem]",
         brutText: "px-1 py-1 text-sm",
+      },
+    },
+    defaultVariants: {
       variant: "default",
       size: "default",
     },
+
   },
 );
 
