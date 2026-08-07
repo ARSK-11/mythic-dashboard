@@ -375,6 +375,7 @@ function Dashboard() {
                     whileHover={{ x: -3, y: -3, boxShadow: "8px 8px 0 var(--ink)" }}
                     type="button"
                     onClick={() => setSelectedId(incident.id)}
+                    data-volt-say={`Incident ${String(incident.id).padStart(2, "0")}: ${incident.title} — ${incident.duration} hilang.`}
                     aria-label={`View ${incident.title} incident`}
                     style={
                       selected.id === incident.id && !dream
