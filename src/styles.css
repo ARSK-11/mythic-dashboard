@@ -142,3 +142,114 @@
     color: var(--color-foreground);
   }
 }
+
+/* ============ Neo-brutalist "Return to Ithaca" design system ============ */
+:root {
+  --ink: oklch(0.22 0 0);
+  --paper: oklch(0.951 0.021 92.5);
+  --white: oklch(0.99 0.011 91);
+  --brut-yellow: oklch(0.89 0.166 92.5);
+  --brut-blue: oklch(0.79 0.093 259);
+  --brut-pink: oklch(0.8 0.114 353);
+  --brut-green: oklch(0.88 0.164 129);
+  --brut-purple: oklch(0.75 0.135 292);
+  --brut-orange: oklch(0.78 0.135 55);
+  --brut-rust: oklch(0.58 0.152 40);
+  --brut-shadow: 7px 7px 0 var(--ink);
+  --brut-shadow-sm: 4px 4px 0 var(--ink);
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono-brut: "DM Mono", monospace;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-brut-white: var(--white);
+  --color-brut-yellow: var(--brut-yellow);
+  --color-brut-blue: var(--brut-blue);
+  --color-brut-pink: var(--brut-pink);
+  --color-brut-green: var(--brut-green);
+  --color-brut-purple: var(--brut-purple);
+  --color-brut-orange: var(--brut-orange);
+  --color-brut-rust: var(--brut-rust);
+  --font-display: var(--font-display);
+  --font-mono-brut: var(--font-mono-brut);
+}
+
+@utility brut-surface {
+  background:
+    radial-gradient(circle at 10% 15%, color-mix(in oklab, var(--brut-yellow) 40%, transparent), transparent 25%),
+    radial-gradient(circle at 90% 12%, color-mix(in oklab, var(--brut-blue) 40%, transparent), transparent 27%),
+    var(--paper);
+}
+
+@utility brut-surface-dream {
+  background:
+    radial-gradient(circle at 20% 15%, color-mix(in oklab, var(--brut-purple) 55%, transparent), transparent 28%),
+    radial-gradient(circle at 80% 20%, color-mix(in oklab, var(--brut-pink) 45%, transparent), transparent 30%),
+    oklch(0.26 0.06 300);
+}
+
+@utility bento-card {
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--white);
+  box-shadow: var(--brut-shadow);
+  color: var(--ink);
+}
+
+@utility bento-card-sm {
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: var(--white);
+  box-shadow: var(--brut-shadow-sm);
+  color: var(--ink);
+}
+
+@utility brut-eyebrow {
+  font-family: var(--font-mono-brut);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@utility brut-mono {
+  font-family: var(--font-mono-brut);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@utility brut-title {
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+@utility brut-stroke-title {
+  color: var(--brut-rust);
+  -webkit-text-stroke: 2px var(--ink);
+  text-shadow: 4px 4px 0 var(--brut-yellow);
+}
+
+@utility brut-meter-track {
+  background: repeating-linear-gradient(-45deg, var(--paper) 0 12px, var(--white) 12px 24px);
+}
+
+@utility brut-dream-card {
+  background:
+    linear-gradient(color-mix(in oklab, var(--white) 90%, transparent), color-mix(in oklab, var(--white) 90%, transparent)),
+    repeating-linear-gradient(-45deg, var(--brut-purple) 0 10px, var(--brut-pink) 10px 20px);
+}
+
+@utility brut-dream-hero {
+  background:
+    linear-gradient(color-mix(in oklab, var(--white) 82%, transparent), color-mix(in oklab, var(--white) 82%, transparent)),
+    repeating-linear-gradient(45deg, var(--brut-purple) 0 18px, var(--brut-pink) 18px 36px);
+}
+
+@utility sun-ring {
+  background: repeating-conic-gradient(from 0deg, var(--brut-yellow) 0deg 8deg, transparent 8deg 16deg);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+}
