@@ -194,13 +194,14 @@ function Dashboard() {
         dream ? "brut-surface-dream" : "brut-surface",
       )}
     >
+      <WavyScroll dream={dream} />
       <BrutalSidebar
         active={activeSection}
         dream={dream}
         onToggleDream={() => setDream((d) => !d)}
         onNavigate={scrollTo}
       />
-      <main className="mx-auto w-[min(1440px,calc(100%-32px))] min-w-0 pb-16 pt-7">
+      <main className="relative z-10 mx-auto w-[min(1440px,calc(100%-32px))] min-w-0 pb-16 pt-7">
         {/* Hero */}
         <header
           id="hero"
