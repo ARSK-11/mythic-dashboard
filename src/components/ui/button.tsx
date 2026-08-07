@@ -16,6 +16,18 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        brutal:
+          "border-[3px] border-ink bg-brut-yellow text-ink font-bold rounded-[14px] shadow-[4px_4px_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--ink)] transition-all",
+        brutalOutline:
+          "border-[3px] border-ink bg-brut-white text-ink font-bold rounded-[14px] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--ink)] transition-all",
+        brutalDark:
+          "border-[3px] border-brut-white bg-brut-yellow text-ink font-bold rounded-[14px] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 transition-all",
+        brutalPill:
+          "border-[3px] border-ink bg-brut-white text-ink font-bold rounded-full shadow-[3px_3px_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] transition-all",
+        brutalPillActive:
+          "border-[3px] border-ink bg-brut-yellow text-ink font-bold rounded-full shadow-[3px_3px_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] transition-all",
+        brutalText:
+          "bg-transparent text-brut-white font-bold underline underline-offset-4 hover:opacity-80",
       },
       size: {
         default: "h-9 px-4 py-2",
