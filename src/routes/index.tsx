@@ -47,6 +47,77 @@ function Dashboard() {
     "Audit not started. Heroic reputation is currently protecting the project lead from scrutiny.",
   );
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState("hero");
+
+  // GSAP: scroll reveals, number counters, parallax, active-section tracking
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context((self) => {
+      const root = self.selector!;
+
+      gsap.from(root("[data-gsap-hero] > *"), {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.09,
+      });
+
+      root("[data-count]").forEach((el: HTMLElement) => {
+        const target = Number(el.dataset["count"] ?? 0);
+        const obj = { v: 0 };
+        gsap.to(obj, {
+          v: target,
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 88%" },
+          onUpdate: () => {
+            el.textContent = String(Math.round(obj.v));
+          },
+        });
+      });
+
+      root("[data-gsap-reveal]").forEach((el: HTMLElement) => {
+        gsap.from(el, {
+          y: 56,
+          opacity: 0,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 90%" },
+        });
+      });
+
+      root("[data-gsap-parallax]").forEach((el: HTMLElement) => {
+        gsap.to(el, {
+          y: -110,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+        });
+      });
+
+      navItems.forEach((item) => {
+        const section = document.getElementById(item.id);
+        if (!section) return;
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 40%",
+          end: "bottom 40%",
+          onToggle: (s) => s.isActive && setActiveSection(item.id),
+        });
+      });
+    }, shellRef);
+    return () => ctx.revert();
+  }, []);
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    gsap.to(window, { duration: 0.8, ease: "power2.inOut", scrollTo: 0 });
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
 
   const visible = useMemo(
     () => incidents.filter((i) => filter === "all" || i.category === filter),
