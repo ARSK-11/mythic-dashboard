@@ -8,18 +8,17 @@ interface Props {
   dream?: boolean;
 }
 
-// Vertical winding route that sits behind the dashboard as a fixed background layer.
+// Big, centred, winding route that starts at the top-middle and snakes down
+// to the bottom-middle of the viewport. The curve is thick and rounded.
 const wavePath =
-  "M 980 70 C 720 110, 580 260, 880 350 S 1180 500, 920 610 S 600 760, 980 860";
+  "M 800 -30 C 1250 20, 1550 220, 1100 320 C 650 420, 350 520, 800 620 C 1250 720, 1550 820, 1050 920 C 550 1020, 450 950, 800 930";
 
 const stops = [
-  { x: 980, y: 70, label: "Troy" },
-  { x: 660, y: 180, label: "Cicones" },
-  { x: 880, y: 350, label: "Lotus" },
-  { x: 1160, y: 500, label: "Cyclops" },
-  { x: 920, y: 610, label: "Aeolia" },
-  { x: 660, y: 740, label: "Laestrygonia" },
-  { x: 980, y: 860, label: "Ithaca" },
+  { x: 800, y: -30 },
+  { x: 1100, y: 320 },
+  { x: 800, y: 620 },
+  { x: 1050, y: 920 },
+  { x: 800, y: 930 },
 ];
 
 export function WavyScroll({ dream = false }: Props) {
@@ -81,10 +80,10 @@ export function WavyScroll({ dream = false }: Props) {
         );
       }
 
-      // Stagger in stop markers as the journey progresses
+      // Fade in small stop markers as the journey progresses (no text labels)
       stops.forEach((s, i) => {
         const stop = containerRef.current?.querySelector(
-          `[data-stop="${s.label}"]`,
+          `[data-stop="${i}"]`,
         );
         if (!stop) return;
         gsap.set(stop, { opacity: 0, scale: 0.6 });
@@ -127,13 +126,13 @@ export function WavyScroll({ dream = false }: Props) {
 
       <svg
         className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1200 900"
+        viewBox="0 0 1600 900"
         preserveAspectRatio="xMidYMid slice"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
           <filter id="bg-wave-shadow" x="-2%" y="-2%" width="104%" height="108%">
-            <feDropShadow dx="4" dy="4" stdDeviation="0" floodColor="var(--ink)" />
+            <feDropShadow dx="6" dy="6" stdDeviation="0" floodColor="var(--ink)" />
           </filter>
         </defs>
 
@@ -143,9 +142,9 @@ export function WavyScroll({ dream = false }: Props) {
           d={wavePath}
           fill="none"
           stroke="var(--ink)"
-          strokeWidth="18"
+          strokeWidth="34"
           strokeLinecap="round"
-          opacity="0.1"
+          opacity="0.12"
         />
         {/* Main path */}
         <path
@@ -153,29 +152,16 @@ export function WavyScroll({ dream = false }: Props) {
           d={wavePath}
           fill="none"
           stroke={dream ? "var(--brut-pink)" : "var(--brut-yellow)"}
-          strokeWidth="10"
+          strokeWidth="26"
           strokeLinecap="round"
           filter="url(#bg-wave-shadow)"
-          opacity="0.35"
+          opacity="0.45"
         />
 
-        {stops.map((s) => (
-          <g key={s.label} data-stop={s.label} className="origin-center">
-            <circle cx={s.x} cy={s.y} r="10" fill="var(--ink)" opacity="0.8" />
-            <circle cx={s.x} cy={s.y} r="5" fill={dream ? "var(--brut-purple)" : "var(--brut-blue)"} />
-            <text
-              x={s.x}
-              y={s.y - 22}
-              textAnchor="middle"
-              className="font-mono-brut uppercase"
-              fill="var(--ink)"
-              fontSize="13"
-              fontWeight="700"
-              letterSpacing="0.05em"
-              opacity="0.55"
-            >
-              {s.label}
-            </text>
+        {stops.map((s, i) => (
+          <g key={i} data-stop={i} className="origin-center">
+            <circle cx={s.x} cy={s.y} r="14" fill="var(--ink)" opacity="0.8" />
+            <circle cx={s.x} cy={s.y} r="8" fill={dream ? "var(--brut-purple)" : "var(--brut-blue)"} />
           </g>
         ))}
       </svg>
@@ -184,11 +170,11 @@ export function WavyScroll({ dream = false }: Props) {
       <div
         ref={shipRef}
         className="pointer-events-none absolute left-0 top-0 opacity-0"
-        style={{ width: 44, height: 44, marginLeft: -22, marginTop: -22 }}
+        style={{ width: 48, height: 48, marginLeft: -24, marginTop: -24 }}
       >
         <div
           className={cn(
-            "flex size-11 items-center justify-center rounded-full border-[3px] border-ink shadow-[3px_3px_0_var(--ink)]",
+            "flex size-12 items-center justify-center rounded-full border-[3px] border-ink shadow-[3px_3px_0_var(--ink)]",
             dream ? "bg-brut-pink" : "bg-brut-white",
           )}
         >
