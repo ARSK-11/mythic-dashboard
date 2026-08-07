@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
 import { WavyScroll } from "@/components/WavyScroll";
+import { VoltCompanion } from "@/components/VoltCompanion";
 import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
 import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
 import { cn } from "@/lib/utils";
