@@ -48,7 +48,7 @@ function Dashboard() {
     () => incidents.filter((i) => filter === "all" || i.category === filter),
     [filter],
   );
-  const selected = incidents.find((i) => i.id === selectedId) ?? incidents[0];
+  const selected = (incidents.find((i) => i.id === selectedId) ?? incidents[0])!;
 
   const runAudit = () => {
     if (timer.current) clearInterval(timer.current);
@@ -78,13 +78,13 @@ function Dashboard() {
   const nextIncident = () => {
     if (!visible.length) return;
     const idx = visible.findIndex((i) => i.id === selectedId);
-    setSelectedId(visible[idx === -1 ? 0 : (idx + 1) % visible.length].id);
+    setSelectedId(visible[idx === -1 ? 0 : (idx + 1) % visible.length]!.id);
   };
 
   const changeFilter = (key: "all" | IncidentCategory) => {
     setFilter(key);
     const next = incidents.filter((i) => key === "all" || i.category === key);
-    if (next.length && !next.some((i) => i.id === selectedId)) setSelectedId(next[0].id);
+    if (next.length && !next.some((i) => i.id === selectedId)) setSelectedId(next[0]!.id);
   };
 
   const copyReport = async () => {
@@ -283,7 +283,7 @@ function Dashboard() {
                     style={
                       selected.id === incident.id && !dream
                         ? { background: incident.color }
-                        : undefined
+                        : {}
                     }
                     className={cn(
                       "relative min-h-[250px] overflow-hidden p-6 text-left bento-card-sm",
