@@ -337,7 +337,7 @@ function Dashboard() {
         </section>
 
         {/* Incidents */}
-        <section className="mt-16">
+        <section id="incidents" data-gsap-reveal className="mt-16">
           <div className="mb-6 flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end">
             <div>
               <p className="mb-2.5 brut-eyebrow">Incident registry</p>
