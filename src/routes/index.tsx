@@ -113,7 +113,6 @@ function Dashboard() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    gsap.to(window, { duration: 0.8, ease: "power2.inOut", scrollTo: 0 });
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
