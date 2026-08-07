@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Menu, X, ChevronLeft, Compass, BarChart3, Gauge, ScrollText, Wrench, Moon } from "lucide-react";
+import { Menu, X, ChevronLeft, Compass, BarChart3, Gauge, ScrollText, Wrench, Moon, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const navItems = [
   { id: "hero", label: "Overview", icon: Compass },
-  { id: "stats", label: "Statistics", icon: BarChart3 },
-  { id: "audit", label: "Health audit", icon: Gauge },
-  { id: "incidents", label: "Incidents", icon: ScrollText },
-  { id: "remediation", label: "Remediation", icon: Wrench },
+  { id: "stats", label: "Statistik", icon: BarChart3 },
+  { id: "skills", label: "Skill stack", icon: Gauge },
+  { id: "projects", label: "Projects", icon: ScrollText },
+  { id: "services", label: "Layanan", icon: Wrench },
+  { id: "contact", label: "Kontak", icon: Mail },
 ];
+
 
 interface Props {
   active: string;
