@@ -3,10 +3,11 @@ import { motion } from "motion/react";
 import "./volt-robot.css";
 
 const IDLE = [
-  "Hi. I'm Volt. I watch this dashboard.",
-  "Hover a journey card. I'll gossip.",
-  "Ten years late. Rough delivery.",
+  "Hai! Aku Volt, pemandu portfolio Aris.",
+  "Hover kartu project — aku ceritakan isinya.",
+  "55 repo di GitHub. Ini yang terbaik.",
 ];
+
 const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]!;
 
 export function VoltCompanion() {
