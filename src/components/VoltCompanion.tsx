@@ -117,7 +117,19 @@ export function VoltCompanion() {
   }, [say]);
 
   return (
-    <div className="volt volt--corner" aria-hidden={false}>
+    <motion.div
+      className="volt volt--corner"
+      aria-hidden={false}
+      initial={{ y: 160, opacity: 0, scale: 0.5, rotate: -6 }}
+      animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 180,
+        damping: 12,
+        mass: 1.1,
+        delay: 0.6,
+      }}
+    >
       <div className="robot" data-mood={mood} ref={robotRef}>
         <div
           className={visible ? "bubble" : "bubble is-hidden"}
@@ -150,6 +162,6 @@ export function VoltCompanion() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
