@@ -300,8 +300,6 @@ function Dashboard() {
           ))}
         </section>
 
-        <WavyScroll dream={dream} />
-
         {/* Audit */}
         <section id="audit" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
 
