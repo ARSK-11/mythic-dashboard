@@ -275,7 +275,11 @@ function Dashboard() {
         </header>
 
         {/* Stats */}
-        <section aria-label="Project statistics" className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section
+          id="stats"
+          aria-label="Project statistics"
+          className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
+        >
           {stats.map((s, i) => (
             <motion.article
               key={s.label}
@@ -287,7 +291,7 @@ function Dashboard() {
             >
               <p className="brut-mono">{s.label}</p>
               <strong className="mt-auto text-[clamp(4rem,7vw,6.4rem)] leading-[0.9] tracking-[-0.08em]">
-                {s.value}
+                <span data-count={s.value}>0</span>
               </strong>
               <span className="mt-3 font-semibold leading-snug">{s.caption}</span>
             </motion.article>
@@ -295,7 +299,8 @@ function Dashboard() {
         </section>
 
         {/* Audit */}
-        <section className="mt-7 p-7 bento-card sm:p-12">
+        <section id="audit" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
+
           <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
             <div>
               <p className="mb-2.5 brut-eyebrow">Delivery health</p>
