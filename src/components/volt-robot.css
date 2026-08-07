@@ -683,3 +683,55 @@
     transition: none;
   }
 }
+
+/* corner companion variant */
+.volt.volt--corner {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  transform: scale(0.82);
+  transform-origin: bottom right;
+}
+.volt.volt--corner .robot {
+  margin-bottom: 0;
+}
+.volt.volt--corner .bubble {
+  bottom: calc(100% + 18px);
+  left: auto;
+  right: 0;
+  transform: none;
+  text-align: left;
+  max-width: 240px;
+  transition: opacity 0.25s ease;
+}
+.volt.volt--corner .bubble::after {
+  left: auto;
+  right: 26px;
+  transform: rotate(45deg);
+}
+.volt.volt--corner .bubble.is-hidden {
+  opacity: 0;
+}
+.volt.volt--corner .bubble.pop {
+  animation: volt-pop-corner 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes volt-pop-corner {
+  from {
+    transform: scale(0.8);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@media (max-width: 640px) {
+  .volt.volt--corner {
+    transform: scale(0.6);
+  }
+}

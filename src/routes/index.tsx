@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
 import { WavyScroll } from "@/components/WavyScroll";
+import { VoltCompanion } from "@/components/VoltCompanion";
 import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
 import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
 import { cn } from "@/lib/utils";
@@ -375,6 +376,7 @@ function Dashboard() {
                     whileHover={{ x: -3, y: -3, boxShadow: "8px 8px 0 var(--ink)" }}
                     type="button"
                     onClick={() => setSelectedId(incident.id)}
+                    data-volt-say={`Incident ${String(incident.id).padStart(2, "0")}: ${incident.title} — ${incident.duration} hilang.`}
                     aria-label={`View ${incident.title} incident`}
                     style={
                       selected.id === incident.id && !dream
@@ -504,6 +506,7 @@ function Dashboard() {
           </p>
         </footer>
       </main>
+      <VoltCompanion />
     </div>
   );
 }
