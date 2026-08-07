@@ -4,51 +4,66 @@ import { AnimatePresence, motion } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { toast } from "sonner";
+import { Github, Linkedin, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
 import { WavyScroll } from "@/components/WavyScroll";
 import { VoltCompanion } from "@/components/VoltCompanion";
 import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
-import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
+import {
+  filters,
+  profile,
+  projects,
+  services,
+  skills,
+  stats,
+  type ProjectCategory,
+} from "@/lib/portfolio";
 import { cn } from "@/lib/utils";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Return to Ithaca · Odysseus Project Postmortem Dashboard" },
+      { title: "Aris Krisnanto · Fullstack & Frontend Developer Portfolio" },
       {
         name: "description",
         content:
-          "A mythological project postmortem dashboard: audit the distractions, blockers, and communication failures that turned Odysseus' trip home into a ten-year delay.",
+          "Portfolio Aris Krisnanto (ARSK-11): fullstack & frontend developer. React, TypeScript, Node.js, PHP, dan Python — dashboard, web app, API, dan tooling.",
       },
-      { property: "og:title", content: "Return to Ithaca · Project Postmortem Dashboard" },
+      { property: "og:title", content: "Aris Krisnanto · Fullstack & Frontend Developer" },
       {
         property: "og:description",
         content:
-          "Incident registry, delivery health audit, and remediation plan for the most famous ten-year delivery delay in history.",
+          "Proyek pilihan, skill stack, dan cara menghubungi saya. Dibangun dengan React, TypeScript, GSAP, dan Motion.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mythic-dashboard.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: profile.name,
+          jobTitle: profile.role,
+          url: "https://mythic-dashboard.lovable.app/",
+          sameAs: [profile.github, profile.linkedin],
+        }),
+      },
+    ],
   }),
-  component: Dashboard,
+  component: Portfolio,
 });
 
 const spring = { type: "spring" as const, stiffness: 220, damping: 24 };
 
-function Dashboard() {
+function Portfolio() {
   const [selectedId, setSelectedId] = useState(1);
-  const [filter, setFilter] = useState<"all" | IncidentCategory>("all");
+  const [filter, setFilter] = useState<"all" | ProjectCategory>("all");
   const [dream, setDream] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [auditing, setAuditing] = useState(false);
-  const [grade, setGrade] = useState("?");
-  const [status, setStatus] = useState(
-    "Audit not started. Heroic reputation is currently protecting the project lead from scrutiny.",
-  );
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState("hero");
 
@@ -77,6 +92,16 @@ function Dashboard() {
           onUpdate: () => {
             el.textContent = String(Math.round(obj.v));
           },
+        });
+      });
+
+      root("[data-skill-bar]").forEach((el: HTMLElement) => {
+        gsap.from(el, {
+          scaleX: 0,
+          transformOrigin: "left center",
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 92%" },
         });
       });
 
@@ -118,73 +143,38 @@ function Dashboard() {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-
-
   const visible = useMemo(
-    () => incidents.filter((i) => filter === "all" || i.category === filter),
+    () => projects.filter((p) => filter === "all" || p.category === filter),
     [filter],
   );
-  const selected = (incidents.find((i) => i.id === selectedId) ?? incidents[0])!;
+  const selected = (projects.find((p) => p.id === selectedId) ?? projects[0])!;
 
-  const runAudit = () => {
-    if (timer.current) clearInterval(timer.current);
-    setAuditing(true);
-    setGrade("…");
-    setProgress(0);
-    setStatus(
-      "Reviewing detours, blockers, crew permissions, divine dependencies, and mast-based automation.",
-    );
-    let p = 0;
-    timer.current = setInterval(() => {
-      p += Math.floor(Math.random() * 8) + 3;
-      if (p >= 100) {
-        p = 100;
-        if (timer.current) clearInterval(timer.current);
-        setGrade("D−");
-        setAuditing(false);
-        setStatus(
-          "Audit complete: approximately 86% of the journey delay could have been reduced through delegation, access control, deadlines, and earlier escalation.",
-        );
-        toast("Audit complete. The gods have been notified.");
-      }
-      setProgress(p);
-    }, 90);
+  const changeFilter = (key: "all" | ProjectCategory) => {
+    setFilter(key);
+    const next = projects.filter((p) => key === "all" || p.category === key);
+    if (next.length && !next.some((p) => p.id === selectedId)) setSelectedId(next[0]!.id);
   };
 
-  const nextIncident = () => {
+  const nextProject = () => {
     if (!visible.length) return;
-    const idx = visible.findIndex((i) => i.id === selectedId);
+    const idx = visible.findIndex((p) => p.id === selectedId);
     setSelectedId(visible[idx === -1 ? 0 : (idx + 1) % visible.length]!.id);
   };
 
-  const changeFilter = (key: "all" | IncidentCategory) => {
-    setFilter(key);
-    const next = incidents.filter((i) => key === "all" || i.category === key);
-    if (next.length && !next.some((i) => i.id === selectedId)) setSelectedId(next[0]!.id);
-  };
-
-  const copyReport = async () => {
-    const report = [
-      "ODYSSEUS PROJECT POSTMORTEM",
+  const copyContact = async () => {
+    const card = [
+      profile.name.toUpperCase(),
+      profile.role,
       "",
-      `Incident: ${selected.title}`,
-      `Category: ${selected.categoryLabel}`,
-      `Duration: ${selected.duration}`,
-      "",
-      `What happened: ${selected.issue}`,
-      "",
-      `Recommended response: ${selected.action}`,
-      "",
-      `System required: ${selected.system}`,
-      "",
-      "Final assessment: Legendary hero. Questionable project manager.",
+      `GitHub: ${profile.github}`,
+      `LinkedIn: ${profile.linkedin}`,
     ].join("\n");
     try {
-      await navigator.clipboard.writeText(report);
+      await navigator.clipboard.writeText(card);
     } catch {
       /* clipboard unavailable */
     }
-    toast("Postmortem copied.");
+    toast("Kontak disalin.");
   };
 
   return (
@@ -220,13 +210,10 @@ function Dashboard() {
             className="relative z-[2] flex min-w-0 flex-col items-start justify-center p-8 sm:p-12 lg:p-20"
           >
             <p className="mb-2.5 brut-eyebrow">
-
-              {dream
-                ? "Unreliable Narrative Mode · Dream Hypothesis"
-                : "Olympus Operations · Project Postmortem"}
+              {profile.role} · Available for work
             </p>
-            <h1 className="max-w-[760px] text-[clamp(3.2rem,9vw,8.5rem)] font-bold leading-[0.82] tracking-[-0.075em]">
-              {dream ? "Was Ithaca " : "Return to "}
+            <h1 className="max-w-[760px] text-[clamp(3rem,8vw,7.5rem)] font-bold leading-[0.82] tracking-[-0.075em]">
+              Aris
               <motion.span
                 key={dream ? "dream" : "real"}
                 initial={{ opacity: 0, y: 18 }}
@@ -234,33 +221,31 @@ function Dashboard() {
                 transition={spring}
                 className="block brut-stroke-title"
               >
-                {dream ? "Ever Real?" : "Ithaca"}
+                Krisnanto
               </motion.span>
             </h1>
             <p className="mt-7 max-w-[680px] text-[clamp(1rem,1.7vw,1.24rem)] leading-relaxed">
-              {dream
-                ? "Perhaps the monsters, goddesses, storms, and ten-year detour were not project failures at all—but symbols inside one extremely elaborate dream."
-                : "A routine trip home became a ten-year delivery delay involving monsters, divine interference, poor delegation, and one extremely manual automation."}
+              {profile.tagline}
             </p>
             <div className="mt-8 flex w-full flex-wrap gap-3.5">
               <Button
                 variant="brutal"
                 size="brut"
-                onClick={runAudit}
-                disabled={auditing}
+                onClick={() => scrollTo("projects")}
                 className="w-full justify-between gap-6 sm:w-auto"
               >
-                <span>{auditing ? "Auditing mythology…" : progress === 100 ? "Run audit again" : "Run project audit"}</span>
+                <span>Lihat projects</span>
                 <span aria-hidden="true">↗</span>
               </Button>
-              <Button
-                variant="brutalOutline"
-                size="brut"
-                aria-pressed={dream}
-                onClick={() => setDream((d) => !d)}
-                className="w-full sm:w-auto"
-              >
-                Dream theory: {dream ? "ON" : "OFF"}
+              <Button variant="brutalOutline" size="brut" asChild className="w-full sm:w-auto">
+                <a href={profile.github} target="_blank" rel="noreferrer noopener">
+                  <Github className="size-4" aria-hidden="true" /> GitHub
+                </a>
+              </Button>
+              <Button variant="brutalOutline" size="brut" asChild className="w-full sm:w-auto">
+                <a href={profile.linkedin} target="_blank" rel="noreferrer noopener">
+                  <Linkedin className="size-4" aria-hidden="true" /> LinkedIn
+                </a>
               </Button>
             </div>
           </div>
@@ -272,7 +257,7 @@ function Dashboard() {
           >
             <ShipSymbol dream={dream} />
             <p className="absolute inset-x-5 bottom-4 text-center brut-eyebrow">
-              {dream ? "Reality status unknown" : "Destination overdue"}
+              @{profile.handle}
             </p>
           </div>
         </header>
@@ -280,7 +265,7 @@ function Dashboard() {
         {/* Stats */}
         <section
           id="stats"
-          aria-label="Project statistics"
+          aria-label="Statistik"
           className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
         >
           {stats.map((s, i) => (
@@ -301,54 +286,47 @@ function Dashboard() {
           ))}
         </section>
 
-        {/* Audit */}
-        <section id="audit" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
-
-          <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+        {/* Skills */}
+        <section id="skills" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
+          <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
             <div>
-              <p className="mb-2.5 brut-eyebrow">Delivery health</p>
-              <h2 className="text-[clamp(1.8rem,4vw,3.6rem)] brut-title">Journey efficiency audit</h2>
+              <p className="mb-2.5 brut-eyebrow">Tech stack</p>
+              <h2 className="text-[clamp(1.8rem,4vw,3.6rem)] brut-title">Skill yang saya pakai</h2>
             </div>
-            <motion.strong
-              key={grade}
-              initial={{ scale: 0.8, rotate: -8 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={spring}
-              className="grid aspect-square w-[72px] shrink-0 place-items-center rounded-full border-[3px] border-ink bg-brut-pink text-4xl shadow-[4px_4px_0_var(--ink)] sm:w-[90px]"
-            >
-              {grade}
-            </motion.strong>
+            <p className="max-w-[420px] leading-relaxed">
+              Kombinasi frontend, backend, dan tooling. Sebagian dipakai harian, sebagian untuk
+              eksperimen dan otomasi.
+            </p>
           </div>
-          <div
-            role="progressbar"
-            aria-label="Audit progress"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={progress}
-            className="mt-8 h-[34px] overflow-hidden rounded-full border-[3px] border-ink brut-meter-track"
-          >
-            <motion.span
-              className="block h-full border-r-[3px] border-ink bg-brut-green"
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.12, ease: "linear" }}
-            />
-          </div>
-          <div className="mt-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <p className="m-0 max-w-[820px] leading-relaxed">{status}</p>
-            <span className="shrink-0 font-mono-brut text-xl font-bold">{progress}%</span>
+          <div className="mt-9 grid gap-5 md:grid-cols-2">
+            {skills.map((s) => (
+              <div key={s.name}>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="font-semibold">{s.name}</span>
+                  <span className="font-mono-brut text-sm font-bold">{s.level}%</span>
+                </div>
+                <div className="h-[26px] overflow-hidden rounded-full border-[3px] border-ink brut-meter-track">
+                  <span
+                    data-skill-bar
+                    className={cn("block h-full border-r-[3px] border-ink", s.bg)}
+                    style={{ width: `${s.level}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Incidents */}
-        <section id="incidents" data-gsap-reveal className="mt-16">
+        {/* Projects */}
+        <section id="projects" data-gsap-reveal className="mt-16">
           <div className="mb-6 flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end">
             <div>
-              <p className="mb-2.5 brut-eyebrow">Incident registry</p>
+              <p className="mb-2.5 brut-eyebrow">Selected work</p>
               <h2 className="text-[clamp(1.8rem,4vw,3.6rem)] brut-title">
-                Where the journey went wrong
+                Projects pilihan dari GitHub
               </h2>
             </div>
-            <div className="flex flex-wrap gap-2.5" aria-label="Incident filters">
+            <div className="flex flex-wrap gap-2.5" aria-label="Filter project">
               {filters.map((f) => (
                 <Button
                   key={f.key}
@@ -365,9 +343,9 @@ function Dashboard() {
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.75fr)]">
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
-                {visible.map((incident) => (
+                {visible.map((project) => (
                   <motion.button
-                    key={incident.id}
+                    key={project.id}
                     layout
                     initial={{ opacity: 0, scale: 0.94 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -375,34 +353,32 @@ function Dashboard() {
                     transition={spring}
                     whileHover={{ x: -3, y: -3, boxShadow: "8px 8px 0 var(--ink)" }}
                     type="button"
-                    onClick={() => setSelectedId(incident.id)}
-                    data-volt-say={`Incident ${String(incident.id).padStart(2, "0")}: ${incident.title} — ${incident.duration} hilang.`}
-                    aria-label={`View ${incident.title} incident`}
+                    onClick={() => setSelectedId(project.id)}
+                    data-volt-say={`${project.title} — ${project.stack}. ${project.summary}`}
+                    aria-label={`Lihat detail ${project.title}`}
                     style={
-                      selected.id === incident.id && !dream
-                        ? { background: incident.color }
-                        : {}
+                      selected.id === project.id && !dream ? { background: project.color } : {}
                     }
                     className={cn(
                       "relative min-h-[250px] overflow-hidden p-6 text-left bento-card-sm",
                       dream && "brut-dream-card",
-                      selected.id === incident.id && "-translate-x-[3px] -translate-y-[3px] shadow-[8px_8px_0_var(--ink)]",
+                      selected.id === project.id &&
+                        "-translate-x-[3px] -translate-y-[3px] shadow-[8px_8px_0_var(--ink)]",
                     )}
                   >
                     <span
                       className="absolute -bottom-6 -right-6 size-[90px] rounded-full border-[3px] border-ink"
-                      style={{ background: incident.color }}
+                      style={{ background: project.color }}
                     />
                     <div className="flex justify-between gap-4">
-                      <span className="brut-mono">
-                        Incident {String(incident.id).padStart(2, "0")}
-                      </span>
-                      <span className="brut-mono">{incident.duration}</span>
+                      <span className="brut-mono">{project.categoryLabel}</span>
+                      <span className="brut-mono">{project.year}</span>
                     </div>
-                    <h3 className="mb-3 mt-10 max-w-[85%] text-[clamp(1.5rem,3vw,2.4rem)] leading-none tracking-[-0.045em]">
-                      {incident.title}
+                    <h3 className="mb-3 mt-10 max-w-[85%] text-[clamp(1.4rem,2.6vw,2.1rem)] leading-none tracking-[-0.045em]">
+                      {project.title}
                     </h3>
-                    <p className="max-w-[86%] leading-relaxed">{incident.summary}</p>
+                    <p className="max-w-[86%] leading-relaxed">{project.summary}</p>
+                    <p className="mt-4 brut-mono">{project.stack}</p>
                   </motion.button>
                 ))}
               </AnimatePresence>
@@ -418,31 +394,32 @@ function Dashboard() {
                   className="rounded-full border-2 border-brut-white px-2.5 py-2 font-mono-brut text-[0.68rem] font-bold uppercase tracking-wider text-ink"
                   style={{ background: selected.color }}
                 >
-                  {selected.severity}
+                  {selected.role}
                 </span>
-                <span className="brut-mono">
-                  Incident {String(selected.id).padStart(2, "0")}
-                </span>
+                <span className="brut-mono">{selected.year}</span>
               </div>
-              <motion.div key={selected.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
+              <motion.div
+                key={selected.id}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={spring}
+              >
                 <p className="mb-2.5 mt-11 brut-mono text-brut-yellow">{selected.categoryLabel}</p>
-                <h3 className="text-[clamp(2rem,4vw,4rem)] leading-[0.95] tracking-[-0.055em]">
+                <h3 className="text-[clamp(1.9rem,3.6vw,3.4rem)] leading-[0.95] tracking-[-0.055em]">
                   {selected.title}
                 </h3>
                 <div className="mt-8">
-                  <span className="brut-mono">What happened</span>
-                  <p className="mt-2.5 leading-relaxed opacity-80">
-                    {dream ? `Possible dream symbol: ${selected.issue}` : selected.issue}
-                  </p>
+                  <span className="brut-mono">Tentang project</span>
+                  <p className="mt-2.5 leading-relaxed opacity-80">{selected.detail}</p>
                 </div>
                 <div className="mt-8">
-                  <span className="brut-mono">What should have been done</span>
-                  <p className="mt-2.5 leading-relaxed opacity-80">{selected.action}</p>
+                  <span className="brut-mono">Stack</span>
+                  <p className="mt-2.5 leading-relaxed opacity-80">{selected.stack}</p>
                 </div>
                 <div className="mt-8 flex items-center justify-between gap-4 rounded-2xl border-2 border-brut-white bg-brut-purple p-4 text-ink">
                   <div>
-                    <span className="brut-mono">Recommended system</span>
-                    <strong className="mt-1.5 block leading-snug">{selected.system}</strong>
+                    <span className="brut-mono">Highlight</span>
+                    <strong className="mt-1.5 block leading-snug">{selected.highlight}</strong>
                   </div>
                   <span
                     aria-hidden="true"
@@ -453,20 +430,29 @@ function Dashboard() {
                 </div>
               </motion.div>
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button variant="brutalDark" size="brut" onClick={nextIncident}>
-                  Next incident
+                <Button variant="brutalDark" size="brut" asChild>
+                  <a href={selected.github} target="_blank" rel="noreferrer noopener">
+                    <Github className="size-4" aria-hidden="true" /> Source
+                  </a>
                 </Button>
-                <Button variant="brutalText" size="brutText" onClick={copyReport}>
-                  Copy postmortem
+                {selected.live && (
+                  <Button variant="brutalDark" size="brut" asChild>
+                    <a href={selected.live} target="_blank" rel="noreferrer noopener">
+                      <ExternalLink className="size-4" aria-hidden="true" /> Live
+                    </a>
+                  </Button>
+                )}
+                <Button variant="brutalText" size="brutText" onClick={nextProject}>
+                  Project berikutnya
                 </Button>
               </div>
             </aside>
           </div>
         </section>
 
-        {/* Remediation */}
-        <section id="remediation" className="mt-16 grid gap-5 lg:grid-cols-3">
-          {remediations.map((r, i) => (
+        {/* Services */}
+        <section id="services" className="mt-16 grid gap-5 lg:grid-cols-3">
+          {services.map((r, i) => (
             <motion.article
               key={r.number}
               initial={{ opacity: 0, y: 26 }}
@@ -487,22 +473,44 @@ function Dashboard() {
           ))}
         </section>
 
+        {/* Contact */}
         <footer
+          id="contact"
+          data-gsap-reveal
           className={cn(
-            "mt-7 flex flex-col items-start justify-between gap-5 p-8 bento-card sm:flex-row sm:items-center sm:p-12",
+            "mt-7 flex flex-col items-start justify-between gap-6 p-8 bento-card sm:p-12 lg:flex-row lg:items-center",
             dream ? "bg-brut-purple" : "bg-brut-green",
           )}
         >
           <div>
-            <p className="mb-2.5 brut-eyebrow">Final assessment</p>
-            <h2 className="text-[clamp(1.8rem,4vw,3.6rem)] brut-title">
-              Legendary hero. {dream ? "Possibly unconscious" : "Questionable"} project manager.
+            <p className="mb-2.5 brut-eyebrow">Mari bekerja sama</p>
+            <h2 className="max-w-[620px] text-[clamp(1.8rem,4vw,3.6rem)] brut-title">
+              Punya project? Saya siap bantu bangun.
             </h2>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Button variant="brutal" size="brut" asChild>
+                <a href={profile.linkedin} target="_blank" rel="noreferrer noopener">
+                  <Linkedin className="size-4" aria-hidden="true" /> Hubungi via LinkedIn
+                </a>
+              </Button>
+              <Button variant="brutalOutline" size="brut" asChild>
+                <a href={profile.github} target="_blank" rel="noreferrer noopener">
+                  <Github className="size-4" aria-hidden="true" /> github.com/{profile.handle}
+                </a>
+              </Button>
+              <Button variant="brutalText" size="brutText" onClick={copyContact}>
+                Salin kontak
+              </Button>
+            </div>
           </div>
-          <p className="font-mono-brut text-[0.78rem] uppercase leading-relaxed sm:text-right">
-            Project: Return to Ithaca
+          <p className="font-mono-brut text-[0.78rem] uppercase leading-relaxed lg:text-right">
+            {profile.name}
             <br />
-            Status: Eventually delivered
+            {profile.role}
+            <br />
+            <a href={profile.oldSite} target="_blank" rel="noreferrer noopener" className="underline">
+              portfolio v1
+            </a>
           </p>
         </footer>
       </main>
