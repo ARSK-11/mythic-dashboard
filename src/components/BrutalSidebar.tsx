@@ -131,7 +131,7 @@ export function BrutalSidebar({ active, dream, onToggleDream, onNavigate }: Prop
       {/* Desktop rail */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 border-r-[3px] border-ink bg-brut-paper/70 backdrop-blur-sm transition-[width] duration-300 lg:block",
+          "sticky top-0 hidden h-screen shrink-0 border-r-[3px] border-ink bg-paper/70 backdrop-blur-sm transition-[width] duration-300 lg:block",
           collapsed ? "w-[86px]" : "w-[248px]",
         )}
       >
@@ -148,7 +148,7 @@ export function BrutalSidebar({ active, dream, onToggleDream, onNavigate }: Prop
           />
           <aside
             ref={panelRef}
-            className="absolute inset-y-0 left-0 w-[270px] border-r-[3px] border-ink bg-brut-paper"
+            className="absolute inset-y-0 left-0 w-[270px] border-r-[3px] border-ink bg-paper"
           >
             {inner}
           </aside>
