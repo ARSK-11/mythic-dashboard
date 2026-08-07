@@ -187,22 +187,37 @@ function Dashboard() {
 
   return (
     <div
+      ref={shellRef}
       className={cn(
-        "min-h-screen font-display text-ink transition-colors duration-500",
+        "flex min-h-screen font-display text-ink transition-colors duration-500",
         dream ? "brut-surface-dream" : "brut-surface",
       )}
     >
-      <main className="mx-auto w-[min(1440px,calc(100%-32px))] pb-16 pt-7">
+      <BrutalSidebar
+        active={activeSection}
+        dream={dream}
+        onToggleDream={() => setDream((d) => !d)}
+        onNavigate={scrollTo}
+      />
+      <main className="mx-auto w-[min(1440px,calc(100%-32px))] min-w-0 pb-16 pt-7">
         {/* Hero */}
         <header
+          id="hero"
           className={cn(
             "relative grid overflow-hidden bento-card lg:min-h-[510px] lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.7fr)]",
             dream && "brut-dream-hero",
           )}
         >
-          <div className="pointer-events-none absolute -bottom-[130px] right-[30%] hidden size-[260px] rounded-full border-[3px] border-ink bg-brut-pink md:block" />
-          <div className="relative z-[2] flex min-w-0 flex-col items-start justify-center p-8 sm:p-12 lg:p-20">
+          <div
+            data-gsap-parallax
+            className="pointer-events-none absolute -bottom-[130px] right-[30%] hidden size-[260px] rounded-full border-[3px] border-ink bg-brut-pink md:block"
+          />
+          <div
+            data-gsap-hero
+            className="relative z-[2] flex min-w-0 flex-col items-start justify-center p-8 sm:p-12 lg:p-20"
+          >
             <p className="mb-2.5 brut-eyebrow">
+
               {dream
                 ? "Unreliable Narrative Mode · Dream Hypothesis"
                 : "Olympus Operations · Project Postmortem"}
