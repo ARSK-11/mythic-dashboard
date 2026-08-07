@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
+import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
 import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
