@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import "./volt-robot.css";
 
 const IDLE = [
