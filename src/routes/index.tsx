@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
+import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
 import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,6 +47,76 @@ function Dashboard() {
     "Audit not started. Heroic reputation is currently protecting the project lead from scrutiny.",
   );
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState("hero");
+
+  // GSAP: scroll reveals, number counters, parallax, active-section tracking
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context((self) => {
+      const root = self.selector!;
+
+      gsap.from(root("[data-gsap-hero] > *"), {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.09,
+      });
+
+      root("[data-count]").forEach((el: HTMLElement) => {
+        const target = Number(el.dataset["count"] ?? 0);
+        const obj = { v: 0 };
+        gsap.to(obj, {
+          v: target,
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 88%" },
+          onUpdate: () => {
+            el.textContent = String(Math.round(obj.v));
+          },
+        });
+      });
+
+      root("[data-gsap-reveal]").forEach((el: HTMLElement) => {
+        gsap.from(el, {
+          y: 56,
+          opacity: 0,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 90%" },
+        });
+      });
+
+      root("[data-gsap-parallax]").forEach((el: HTMLElement) => {
+        gsap.to(el, {
+          y: -110,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+        });
+      });
+
+      navItems.forEach((item) => {
+        const section = document.getElementById(item.id);
+        if (!section) return;
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 40%",
+          end: "bottom 40%",
+          onToggle: (s) => s.isActive && setActiveSection(item.id),
+        });
+      });
+    }, shellRef);
+    return () => ctx.revert();
+  }, []);
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
 
   const visible = useMemo(
     () => incidents.filter((i) => filter === "all" || i.category === filter),
@@ -113,22 +187,37 @@ function Dashboard() {
 
   return (
     <div
+      ref={shellRef}
       className={cn(
-        "min-h-screen font-display text-ink transition-colors duration-500",
+        "flex min-h-screen font-display text-ink transition-colors duration-500",
         dream ? "brut-surface-dream" : "brut-surface",
       )}
     >
-      <main className="mx-auto w-[min(1440px,calc(100%-32px))] pb-16 pt-7">
+      <BrutalSidebar
+        active={activeSection}
+        dream={dream}
+        onToggleDream={() => setDream((d) => !d)}
+        onNavigate={scrollTo}
+      />
+      <main className="mx-auto w-[min(1440px,calc(100%-32px))] min-w-0 pb-16 pt-7">
         {/* Hero */}
         <header
+          id="hero"
           className={cn(
             "relative grid overflow-hidden bento-card lg:min-h-[510px] lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.7fr)]",
             dream && "brut-dream-hero",
           )}
         >
-          <div className="pointer-events-none absolute -bottom-[130px] right-[30%] hidden size-[260px] rounded-full border-[3px] border-ink bg-brut-pink md:block" />
-          <div className="relative z-[2] flex min-w-0 flex-col items-start justify-center p-8 sm:p-12 lg:p-20">
+          <div
+            data-gsap-parallax
+            className="pointer-events-none absolute -bottom-[130px] right-[30%] hidden size-[260px] rounded-full border-[3px] border-ink bg-brut-pink md:block"
+          />
+          <div
+            data-gsap-hero
+            className="relative z-[2] flex min-w-0 flex-col items-start justify-center p-8 sm:p-12 lg:p-20"
+          >
             <p className="mb-2.5 brut-eyebrow">
+
               {dream
                 ? "Unreliable Narrative Mode · Dream Hypothesis"
                 : "Olympus Operations · Project Postmortem"}
@@ -186,7 +275,11 @@ function Dashboard() {
         </header>
 
         {/* Stats */}
-        <section aria-label="Project statistics" className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section
+          id="stats"
+          aria-label="Project statistics"
+          className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
+        >
           {stats.map((s, i) => (
             <motion.article
               key={s.label}
@@ -198,7 +291,7 @@ function Dashboard() {
             >
               <p className="brut-mono">{s.label}</p>
               <strong className="mt-auto text-[clamp(4rem,7vw,6.4rem)] leading-[0.9] tracking-[-0.08em]">
-                {s.value}
+                <span data-count={s.value}>0</span>
               </strong>
               <span className="mt-3 font-semibold leading-snug">{s.caption}</span>
             </motion.article>
@@ -206,7 +299,8 @@ function Dashboard() {
         </section>
 
         {/* Audit */}
-        <section className="mt-7 p-7 bento-card sm:p-12">
+        <section id="audit" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
+
           <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
             <div>
               <p className="mb-2.5 brut-eyebrow">Delivery health</p>
@@ -243,7 +337,7 @@ function Dashboard() {
         </section>
 
         {/* Incidents */}
-        <section className="mt-16">
+        <section id="incidents" data-gsap-reveal className="mt-16">
           <div className="mb-6 flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end">
             <div>
               <p className="mb-2.5 brut-eyebrow">Incident registry</p>
@@ -367,7 +461,7 @@ function Dashboard() {
         </section>
 
         {/* Remediation */}
-        <section className="mt-16 grid gap-5 lg:grid-cols-3">
+        <section id="remediation" className="mt-16 grid gap-5 lg:grid-cols-3">
           {remediations.map((r, i) => (
             <motion.article
               key={r.number}
