@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ShipSymbol } from "@/components/ShipSymbol";
+import { WavyScroll } from "@/components/WavyScroll";
 import { BrutalSidebar, navItems } from "@/components/BrutalSidebar";
 import { filters, incidents, remediations, stats, type IncidentCategory } from "@/lib/incidents";
 import { cn } from "@/lib/utils";
@@ -297,6 +298,8 @@ function Dashboard() {
             </motion.article>
           ))}
         </section>
+
+        <WavyScroll dream={dream} />
 
         {/* Audit */}
         <section id="audit" data-gsap-reveal className="mt-7 p-7 bento-card sm:p-12">
